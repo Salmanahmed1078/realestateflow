@@ -2,7 +2,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize the Google Generative AI with the API key
-const genAI = new GoogleGenerativeAI("AIzaSyAZp0QwY2zocO0SnUQpG6yipCXwdC8U1FM");
+const genAI = new GoogleGenerativeAI("AIzaSyA5EDwQj-OAHy9GHnqOEd2OyuiyLlzYQTk");
 
 // Get the generative model
 export const geminiModel = genAI.getGenerativeModel({ model: "gemini-pro" });
@@ -43,7 +43,7 @@ export async function generatePropertyRecommendations(preferences: any, properti
 
 // Function to generate a concise property description (3 sentences max)
 export async function generatePropertyDescription(property: any) {
-  const prompt = `Create a brief, engaging description for this property in exactly 3 sentences. Highlight its most unique features: ${JSON.stringify(property)}`;
+  const prompt = `Create a brief, engaging description for this property in exactly 3 sentences. First sentence should highlight its location and primary feature. Second sentence should mention the bedrooms, bathrooms, and square footage. Third sentence should highlight unique amenities or features like ${property.features.join(', ')}. Be specific and descriptive.`;
   
   try {
     const description = await generateChatResponse(prompt);

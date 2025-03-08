@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -11,9 +12,10 @@ import ChatInput from './ChatInput';
 
 interface AIChatProps {
   onSearch: (filters: PropertyFilters) => void;
+  onOpenChange?: (isOpen: boolean) => void;
 }
 
-const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
+const AIChat: React.FC<AIChatProps> = ({ onSearch, onOpenChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -43,6 +45,13 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
       localStorage.setItem('chatHistory', JSON.stringify(conversationHistory));
     }
   }, [conversationHistory]);
+  
+  // Notify parent component of open state changes
+  useEffect(() => {
+    if (onOpenChange) {
+      onOpenChange(isOpen);
+    }
+  }, [isOpen, onOpenChange]);
 
   const handleQuestionFlow = async (userMessage: string) => {
     setIsLoading(true);
@@ -91,12 +100,16 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
     });
   };
 
+  const toggleChat = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <>
       {/* Floating chat button */}
       <Button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-10 rounded-full shadow-lg p-4 flex items-center justify-center"
+        onClick={toggleChat}
+        className="fixed bottom-6 right-6 z-10 rounded-full shadow-lg p-4 flex items-center justify-center animate-bounce"
         variant="secondary"
         size="icon"
       >
@@ -106,10 +119,10 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
       {/* Chat dialog - positioned on the right side */}
       {isOpen && (
         <div className="fixed inset-y-0 right-0 z-50 flex items-stretch justify-end">
-          <div className="bg-white dark:bg-gray-800 w-full max-w-md h-full flex flex-col animate-slide-in-from-right shadow-xl">
+          <div className="bg-white dark:bg-gray-800 w-[400px] h-full flex flex-col animate-slide-in-from-right shadow-xl">
             {/* Header */}
             <ChatHeader 
-              onClose={() => setIsOpen(false)} 
+              onClose={toggleChat} 
               onReset={resetChat}
             />
             
