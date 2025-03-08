@@ -8,12 +8,14 @@ interface PropertyGridProps {
   properties: Property[];
   isLoading?: boolean;
   error?: string | null;
+  onPropertySelect?: (property: Property) => void;
 }
 
 const PropertyGrid: React.FC<PropertyGridProps> = ({ 
   properties, 
   isLoading = false,
-  error = null
+  error = null,
+  onPropertySelect = () => {}
 }) => {
   // Loading skeleton
   if (isLoading) {
@@ -22,7 +24,7 @@ const PropertyGrid: React.FC<PropertyGridProps> = ({
         {Array.from({ length: 6 }).map((_, index) => (
           <div key={index} className="property-card animate-pulse">
             <div className="h-64 bg-gray-300 dark:bg-gray-700 rounded-t-xl"></div>
-            <div className="p-4">
+            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-b-xl">
               <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded mb-3"></div>
               <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded mb-3 w-3/4"></div>
               <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
@@ -66,7 +68,11 @@ const PropertyGrid: React.FC<PropertyGridProps> = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {properties.map((property) => (
-        <PropertyCard key={property.id} property={property} />
+        <PropertyCard 
+          key={property.id} 
+          property={property} 
+          onSelect={onPropertySelect}
+        />
       ))}
     </div>
   );

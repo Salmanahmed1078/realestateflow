@@ -4,15 +4,18 @@ import { ThemeProvider } from '../context/ThemeContext';
 import Navbar from '../components/layout/Navbar';
 import PropertyGrid from '../components/properties/PropertyGrid';
 import SearchFilters from '../components/search/SearchFilters';
-import AIAssistant from '../components/ai/AIAssistant';
+import AIChat from '../components/ai/AIChat';
+import PropertyDetailModal from '../components/properties/PropertyDetailModal';
 import { properties, getFilteredProperties } from '../data/properties';
-import { PropertyFilters } from '../types/property';
+import { PropertyFilters, Property } from '../types/property';
 import { Building } from 'lucide-react';
+import { Toaster } from '@/components/ui/toaster';
 
 const Index = () => {
   const [filters, setFilters] = useState<PropertyFilters>({});
   const [filteredProperties, setFilteredProperties] = useState(properties);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
 
   const handleFilterChange = (newFilters: PropertyFilters) => {
     setIsLoading(true);
@@ -23,6 +26,14 @@ const Index = () => {
       setFilteredProperties(getFilteredProperties(newFilters));
       setIsLoading(false);
     }, 500);
+  };
+
+  const handlePropertySelect = (property: Property) => {
+    setSelectedProperty(property);
+  };
+
+  const closePropertyModal = () => {
+    setSelectedProperty(null);
   };
 
   return (
@@ -67,13 +78,26 @@ const Index = () => {
               <PropertyGrid 
                 properties={filteredProperties} 
                 isLoading={isLoading}
+                onPropertySelect={handlePropertySelect}
               />
             </div>
           </div>
         </main>
         
         {/* AI Assistant */}
-        <AIAssistant onSearch={handleFilterChange} />
+        <AIChat onSearch={handleFilterChange} />
+        
+        {/* Property Detail Modal */}
+        {selectedProperty && (
+          <PropertyDetailModal 
+            property={selectedProperty} 
+            allProperties={properties}
+            onClose={closePropertyModal} 
+          />
+        )}
+        
+        {/* Toaster for notifications */}
+        <Toaster />
       </div>
     </ThemeProvider>
   );
