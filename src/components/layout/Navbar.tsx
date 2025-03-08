@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
-import { Building, Heart, User, Menu, X } from 'lucide-react';
+import { Building, Heart, User, Menu, X, Search } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isResourcesOpen, setIsResourcesOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -34,6 +35,17 @@ const Navbar: React.FC = () => {
             <a href="#" className="text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-white transition-colors">
               Agent Finder
             </a>
+            <div className="relative group">
+              <button className="text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-white transition-colors">
+                Resources
+              </button>
+              <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 hidden group-hover:block">
+                <a href="#" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Market Trends</a>
+                <a href="#" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Mortgage Calculator</a>
+                <a href="#" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Buying Guide</a>
+                <a href="#" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Selling Guide</a>
+              </div>
+            </div>
           </div>
 
           {/* Desktop Right Side */}
@@ -78,6 +90,22 @@ const Navbar: React.FC = () => {
             <a href="#" className="block py-2 px-3 text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-white transition-colors">
               Agent Finder
             </a>
+            <div className="py-2 px-3">
+              <button className="flex items-center justify-between w-full text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-white transition-colors" onClick={() => setIsResourcesOpen(!isResourcesOpen)}>
+                <span>Resources</span>
+                <svg className={`w-4 h-4 transition-transform ${isResourcesOpen ? 'transform rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {isResourcesOpen && (
+                <div className="mt-2 pl-4 space-y-2">
+                  <a href="#" className="block text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-white transition-colors">Market Trends</a>
+                  <a href="#" className="block text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-white transition-colors">Mortgage Calculator</a>
+                  <a href="#" className="block text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-white transition-colors">Buying Guide</a>
+                  <a href="#" className="block text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-white transition-colors">Selling Guide</a>
+                </div>
+              )}
+            </div>
             <hr className="my-2 border-gray-200 dark:border-gray-700" />
             <div className="flex items-center justify-between">
               <button className="flex items-center space-x-2 py-2 px-3">

@@ -10,6 +10,7 @@ import { properties, getFilteredProperties } from '../data/properties';
 import { PropertyFilters, Property } from '../types/property';
 import { Building } from 'lucide-react';
 import { Toaster } from '@/components/ui/toaster';
+import Footer from '../components/layout/Footer';
 
 const Index = () => {
   const [filters, setFilters] = useState<PropertyFilters>({});
@@ -109,6 +110,7 @@ const Index = () => {
         
         {/* Toaster for notifications */}
         <Toaster />
+        <Footer />
       </div>
     </ThemeProvider>
   );
