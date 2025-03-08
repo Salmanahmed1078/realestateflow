@@ -1,29 +1,4 @@
 
-// Types for Speech Recognition
-export interface SpeechRecognitionEvent extends Event {
-  results: {
-    item(index: number): {
-      item(index: number): {
-        transcript: string;
-      };
-    };
-  };
-}
-
-export interface SpeechRecognition extends EventTarget {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  start(): void;
-  stop(): void;
-  onresult: (event: SpeechRecognitionEvent) => void;
-  onerror: (event: Event) => void;
-}
-
-export interface SpeechRecognitionConstructor {
-  new (): SpeechRecognition;
-}
-
 // Get speech recognition API with browser compatibility
 export const getSpeechRecognition = (): SpeechRecognitionConstructor | null => {
   return (window.SpeechRecognition || window.webkitSpeechRecognition) as SpeechRecognitionConstructor || null;
