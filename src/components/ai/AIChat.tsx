@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,10 +13,36 @@ interface AIChatProps {
   onSearch: (filters: PropertyFilters) => void;
 }
 
-// Define type for Speech Recognition to fix TypeScript errors
-interface Window {
-  SpeechRecognition: any;
-  webkitSpeechRecognition: any;
+// Declare the global SpeechRecognition types
+interface SpeechRecognitionEvent extends Event {
+  results: {
+    item(index: number): {
+      item(index: number): {
+        transcript: string;
+      };
+    };
+  };
+}
+
+interface SpeechRecognition extends EventTarget {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  start(): void;
+  stop(): void;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onerror: (event: Event) => void;
+}
+
+interface SpeechRecognitionConstructor {
+  new (): SpeechRecognition;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  }
 }
 
 const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
@@ -153,7 +180,7 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
           // Find property recommendations using Gemini
           const recommendedIds = await generatePropertyRecommendations(preferences, properties);
           
-          // Create filters based on collected preferences
+          // Create searchFilters based on collected preferences
           const searchFilters: PropertyFilters = {
             propertyType: preferences.propertyType === 'All' ? undefined : preferences.propertyType,
             minPrice: preferences.budget.min,
@@ -254,17 +281,18 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
   const toggleVoiceRecording = () => {
     if (!isRecording) {
       // Check if browser supports SpeechRecognition
-      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+      
+      if (SpeechRecognitionAPI) {
         setIsRecording(true);
-        const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
         const recognition = new SpeechRecognitionAPI();
         
         recognition.lang = 'en-US';
         recognition.continuous = false;
         recognition.interimResults = false;
         
-        recognition.onresult = (event: any) => {
-          const transcript = event.results[0][0].transcript;
+        recognition.onresult = (event: SpeechRecognitionEvent) => {
+          const transcript = event.results.item(0).item(0).transcript;
           setInput(transcript);
           setIsRecording(false);
         };
@@ -312,10 +340,10 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
         <Bot className="h-6 w-6" />
       </Button>
 
-      {/* Chat dialog */}
+      {/* Chat dialog - positioned on the right side */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md h-[600px] max-h-[90vh] flex flex-col animate-scale-in shadow-xl">
+        <div className="fixed inset-y-0 right-0 z-50 flex items-stretch justify-end">
+          <div className="bg-white dark:bg-gray-800 w-full max-w-md h-full flex flex-col animate-slide-in-from-right shadow-xl">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center">

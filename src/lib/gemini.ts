@@ -2,7 +2,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize the Google Generative AI with the API key
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "");
+const genAI = new GoogleGenerativeAI("AIzaSyAZp0QwY2zocO0SnUQpG6yipCXwdC8U1FM");
 
 // Get the generative model
 export const geminiModel = genAI.getGenerativeModel({ model: "gemini-pro" });
@@ -41,15 +41,17 @@ export async function generatePropertyRecommendations(preferences: any, properti
   }
 }
 
-// Function to generate an engaging property description
+// Function to generate a concise property description (3 sentences max)
 export async function generatePropertyDescription(property: any) {
-  const prompt = `Create an engaging and detailed description for this property: ${JSON.stringify(property)}. Include information about its features, neighborhood, and potential lifestyle. Keep it under 200 words.`;
+  const prompt = `Create a brief, engaging description for this property in exactly 3 sentences. Highlight its most unique features: ${JSON.stringify(property)}`;
   
   try {
-    return await generateChatResponse(prompt);
+    const description = await generateChatResponse(prompt);
+    return description;
   } catch (error) {
     console.error("Error generating property description:", error);
-    return "Description not available at the moment.";
+    // Fallback to static text if Gemini fails
+    return `Beautiful ${property.bedrooms} bedroom, ${property.bathrooms} bathroom property in ${property.city}. Features include ${property.features.slice(0, 3).join(', ')}. Located in a desirable neighborhood with great amenities.`;
   }
 }
 
@@ -72,5 +74,18 @@ export async function findSimilarProperties(currentProperty: any, allProperties:
   } catch (error) {
     console.error("Error finding similar properties:", error);
     return [];
+  }
+}
+
+// Function to answer property questions
+export async function answerPropertyQuestion(question: string, property: any) {
+  const prompt = `Based on this property data: ${JSON.stringify(property)}, answer this question in a helpful, concise way: "${question}". If the answer cannot be determined from the data, say "I don't have enough information to answer that question."`;
+  
+  try {
+    const answer = await generateChatResponse(prompt);
+    return answer;
+  } catch (error) {
+    console.error("Error answering property question:", error);
+    return "I'm having trouble processing your question. Please try again later.";
   }
 }
