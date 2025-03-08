@@ -234,7 +234,7 @@ const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                   value={userQuestion}
                   onChange={(e) => setUserQuestion(e.target.value)}
                   placeholder="E.g., Is this pet-friendly? School district rating?"
-                  className="w-full p-2 border border-gray-200 dark:border-gray-700 rounded"
+                  className="w-full p-2 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
                   disabled={isAnswerLoading}
                 />
                 <Button 
