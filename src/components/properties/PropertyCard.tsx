@@ -2,7 +2,7 @@
 import React from 'react';
 import { formatPrice } from '../../data/properties';
 import { Property } from '../../types/property';
-import { Bed, Bath, ArrowsMaximize, Heart, MapPin } from 'lucide-react';
+import { Bed, Bath, Maximize2, Heart, MapPin } from 'lucide-react';
 
 interface PropertyCardProps {
   property: Property;
@@ -66,7 +66,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             <span className="text-sm text-gray-500 dark:text-gray-400">{property.bathrooms} Baths</span>
           </div>
           <div className="flex items-center">
-            <ArrowsMaximize className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
+            <Maximize2 className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
             <span className="text-sm text-gray-500 dark:text-gray-400">{property.squareFeet} sqft</span>
           </div>
         </div>
