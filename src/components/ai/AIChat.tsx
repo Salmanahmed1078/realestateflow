@@ -12,6 +12,12 @@ interface AIChatProps {
   onSearch: (filters: PropertyFilters) => void;
 }
 
+// Define type for Speech Recognition to fix TypeScript errors
+interface Window {
+  SpeechRecognition: any;
+  webkitSpeechRecognition: any;
+}
+
 const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
@@ -148,7 +154,7 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
           const recommendedIds = await generatePropertyRecommendations(preferences, properties);
           
           // Create filters based on collected preferences
-          const filters: PropertyFilters = {
+          const searchFilters: PropertyFilters = {
             propertyType: preferences.propertyType === 'All' ? undefined : preferences.propertyType,
             minPrice: preferences.budget.min,
             maxPrice: preferences.budget.max,
@@ -160,11 +166,11 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
           
           // If we have locations, add the first one as a filter
           if (preferences.locations.length > 0) {
-            filters.location = preferences.locations[0];
+            searchFilters.location = preferences.locations[0];
           }
           
           // Apply filters to the search
-          onSearch(filters);
+          onSearch(searchFilters);
           
           // Generate final response
           let matchCount = recommendedIds.length;
@@ -179,42 +185,42 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
           
         default: // Open conversation after preferences are collected
           // Process natural language query to refine filters
-          const filters: PropertyFilters = {};
+          const naturalLanguageFilters: PropertyFilters = {};
           
           // Check for mentions of pet-friendly
           if (userMessage.toLowerCase().includes('pet friendly') || userMessage.toLowerCase().includes('pet-friendly')) {
-            filters.isPetFriendly = true;
+            naturalLanguageFilters.isPetFriendly = true;
           }
           
           // Check for mentions of pools
           if (userMessage.toLowerCase().includes('pool')) {
-            filters.hasPool = true;
+            naturalLanguageFilters.hasPool = true;
           }
           
           // Check for location mentions
           if (userMessage.toLowerCase().includes('miami')) {
-            filters.location = 'Miami';
+            naturalLanguageFilters.location = 'Miami';
           } else if (userMessage.toLowerCase().includes('san francisco')) {
-            filters.location = 'San Francisco';
+            naturalLanguageFilters.location = 'San Francisco';
           } else if (userMessage.toLowerCase().includes('austin')) {
-            filters.location = 'Austin';
+            naturalLanguageFilters.location = 'Austin';
           }
           
           // Check for bedroom mentions
           const bedroomMatch = userMessage.match(/(\d+)[\s-]*(bed|bedroom|br|bd)/i);
           if (bedroomMatch) {
-            filters.bedrooms = parseInt(bedroomMatch[1], 10);
+            naturalLanguageFilters.bedrooms = parseInt(bedroomMatch[1], 10);
           }
           
           // Check for bathroom mentions
           const bathroomMatch = userMessage.match(/(\d+)[\s-]*(bath|bathroom|ba)/i);
           if (bathroomMatch) {
-            filters.bathrooms = parseInt(bathroomMatch[1], 10);
+            naturalLanguageFilters.bathrooms = parseInt(bathroomMatch[1], 10);
           }
           
           // If we have any filters, apply them
-          if (Object.keys(filters).length > 0) {
-            onSearch(filters);
+          if (Object.keys(naturalLanguageFilters).length > 0) {
+            onSearch(naturalLanguageFilters);
             aiResponse = `I've updated the listings based on your request. Let me know if you want to refine your search further.`;
           } else {
             // If no specific filters detected, generate a response using Gemini
@@ -250,14 +256,14 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch }) => {
       // Check if browser supports SpeechRecognition
       if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         setIsRecording(true);
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
+        const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        const recognition = new SpeechRecognitionAPI();
         
         recognition.lang = 'en-US';
         recognition.continuous = false;
         recognition.interimResults = false;
         
-        recognition.onresult = (event) => {
+        recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
           setInput(transcript);
           setIsRecording(false);

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Loader2, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Property } from '../../types/property';
 import { formatPrice } from '../../data/properties';
