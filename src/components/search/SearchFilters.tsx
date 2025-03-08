@@ -93,7 +93,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onFilterChange }) => {
           </label>
           <select
             id="bedrooms"
-            className="search-input"
+            className="search-input bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             value={bedrooms}
             onChange={(e) => setBedrooms(Number(e.target.value))}
           >
@@ -111,7 +111,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onFilterChange }) => {
           </label>
           <select
             id="bathrooms"
-            className="search-input"
+            className="search-input bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             value={bathrooms}
             onChange={(e) => setBathrooms(Number(e.target.value))}
           >
