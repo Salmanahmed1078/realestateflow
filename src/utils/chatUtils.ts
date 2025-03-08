@@ -32,8 +32,9 @@ export const processUserMessage = async (
         setPreference('propertyType', 'Townhouse');
       }
       
-      // Move to next question
-      aiResponse = "Great! What's your budget range? (e.g., $300k-500k)";
+      // Move to next question with a more natural response
+      const propertyType = preferences.propertyType || 'property';
+      aiResponse = `Excellent choice! A ${propertyType.toLowerCase()} would be a great investment. Now, what's your budget range? Feel free to give me a range like $300k-500k, and I'll find options that fit your budget.`;
       break;
       
     case 1: // Budget question
@@ -54,8 +55,9 @@ export const processUserMessage = async (
         setPreference('budget', { min, max });
       }
       
-      // Move to next question
-      aiResponse = "Which locations are you interested in?";
+      // Move to next question with context
+      const budgetRange = preferences.budget ? `${preferences.budget.min/1000}k-${preferences.budget.max/1000}k` : '';
+      aiResponse = `Got it, I'll look for properties in the ${budgetRange} range. Which areas or neighborhoods are you interested in? You can mention multiple locations if you'd like.`;
       break;
       
     case 2: // Location question
@@ -67,8 +69,9 @@ export const processUserMessage = async (
       
       setPreference('locations', locations);
       
-      // Move to next question
-      aiResponse = "What amenities are must-haves for you? (e.g., pool, garden, parking)";
+      // Move to next question with personalization
+      const location = preferences.locations.length > 0 ? preferences.locations[0] : 'those areas';
+      aiResponse = `${location} is a great choice! To help me find your perfect home, what amenities are must-haves for you? Think about things like a pool, garden, parking, or anything else that's important to your lifestyle.`;
       break;
       
     case 3: // Amenities question
