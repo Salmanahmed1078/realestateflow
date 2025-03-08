@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,19 +8,31 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { initScrollReveal } from "./utils/animationUtils";
+import LoadingScreen from "./components/layout/LoadingScreen";
 
 const queryClient = new QueryClient();
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
   // Initialize scroll reveal animations
   useEffect(() => {
     const cleanup = initScrollReveal();
-    return cleanup;
+    // Simulate loading time and resources initialization
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => {
+      cleanup();
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <LoadingScreen isLoading={isLoading} />
         <Toaster />
         <Sonner />
         <BrowserRouter>
