@@ -1,8 +1,8 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Initialize the Google Generative AI with the API key
-const genAI = new GoogleGenerativeAI("AIzaSyA5EDwQj-OAHy9GHnqOEd2OyuiyLlzYQTk");
+// Initialize the Google Generative AI with the API key from environment variables
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 // Get the generative model
 export const geminiModel = genAI.getGenerativeModel({ model: "gemini-pro" });
