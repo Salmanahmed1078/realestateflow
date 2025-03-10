@@ -1,69 +1,114 @@
-# Welcome to your Lovable project
+# RealEstateFlow
 
-## Project info
+A modern real estate platform with AI-powered property search and recommendations. Experience an intuitive way to find your perfect property with intelligent features and a beautiful user interface.
 
-**URL**: https://lovable.dev/projects/a231a965-2175-451e-923a-ab68b055a024
+[Live Demo](https://realestateflow.vercel.app/)
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+### AI-Powered Property Assistant
+- **Smart Property Descriptions**: Automatically generates detailed, engaging property descriptions
+- **Interactive Q&A**: Ask questions about any property and get instant, context-aware answers
+- **Similar Property Recommendations**: AI-powered suggestions based on your preferences
 
-**Use Lovable**
+### Advanced Property Search
+- **Smart Filters**: Filter by price, location, property type, amenities, and more
+- **Save Searches**: Save your search preferences for quick access
+- **Real-time Updates**: Get notified when new properties match your criteria
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a231a965-2175-451e-923a-ab68b055a024) and start prompting.
+### Modern User Interface
+- **Responsive Design**: Seamless experience across all devices
+- **Dark Mode**: Easy on the eyes with automatic theme switching
+- **Image Gallery**: High-quality property images with intuitive navigation
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tech Stack
 
-**Use your preferred IDE**
+- **Frontend**: React with TypeScript
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **State Management**: Custom stores with TypeScript
+- **AI Integration**: Google Gemini API for property descriptions and Q&A
+- **Build Tool**: Vite
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Getting Started
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Prerequisites
 
-Follow these steps:
+- Node.js 18+ 
+- npm or yarn
+- Google Gemini API key
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Installation
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/realestateflow.git
+cd realestateflow
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+2. Install dependencies:
+```bash
+npm install
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Create a `.env` file in the root directory:
+```env
+VITE_GEMINI_API_KEY=your_gemini_api_key
+```
+
+4. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Environment Variables
 
-**Use GitHub Codespaces**
+| Variable | Description |
+|----------|-------------|
+| VITE_GEMINI_API_KEY | Google Gemini API key for AI features |
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Image Guidelines
 
-## What technologies are used for this project?
+Property images should follow the guidelines in [Image README](./public/images/README.md):
+- Organized directory structure for different property types
+- Standardized naming convention
+- Image optimization requirements
+- Placeholder images for unavailable properties
 
-This project is built with .
+## AI Features
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Property Description Generation
+The AI assistant analyzes property details to generate engaging, natural descriptions highlighting key features, location benefits, and unique selling points.
 
-## How can I deploy this project?
+### Interactive Property Q&A
+Users can ask specific questions about properties and receive accurate, context-aware answers. The AI understands:
+- Property features and amenities
+- Location details and neighborhood information
+- Price comparisons and market value
+- Rental terms and conditions
 
-Simply open [Lovable](https://lovable.dev/projects/a231a965-2175-451e-923a-ab68b055a024) and click on Share -> Publish.
+### Similar Property Recommendations
+The AI analyzes property characteristics to suggest similar listings based on:
+- Price range and property type
+- Location and neighborhood features
+- Amenities and special features
+- User preferences and search history
 
-## I want to use a custom domain - is that possible?
+## Contributing
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/AmazingFeature`
+3. Commit your changes: `git commit -m 'Add some AmazingFeature'`
+4. Push to the branch: `git push origin feature/AmazingFeature`
+5. Open a pull request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [shadcn/ui](https://ui.shadcn.com/) for the beautiful UI components
+- [Google Gemini](https://deepmind.google/technologies/gemini/) for AI capabilities
+- [Tailwind CSS](https://tailwindcss.com/) for styling
