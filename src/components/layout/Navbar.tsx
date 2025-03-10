@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Building, Heart, User, Menu, X, Search, LogOut, Settings, UserCircle, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
-import { useUserStore } from '../../stores/userStore';
+import { useUserStore } from '../../stores/userstore';
 import {
   DropdownMenu,
   DropdownMenuContent,
