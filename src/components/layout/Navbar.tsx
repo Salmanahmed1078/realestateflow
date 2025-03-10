@@ -1,15 +1,54 @@
 
-import React, { useState } from 'react';
-import { Building, Heart, User, Menu, X, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Building, Heart, User, Menu, X, Search, LogOut, Settings, UserCircle, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
+import { useUserStore } from '../../stores/userStore';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
+  const { user, isLoggedIn, isTemporaryLogin, sessionExpiryTime, logout } = useUserStore();
+  const [remainingTime, setRemainingTime] = useState<string>('');
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  // Update remaining time for temporary login
+  useEffect(() => {
+    if (isTemporaryLogin && sessionExpiryTime) {
+      const updateRemainingTime = () => {
+        const now = Date.now();
+        const remaining = sessionExpiryTime - now;
+        
+        if (remaining <= 0) {
+          setRemainingTime('Expired');
+          return;
+        }
+        
+        const minutes = Math.floor(remaining / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+        setRemainingTime(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+      };
+      
+      updateRemainingTime();
+      const interval = setInterval(updateRemainingTime, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isTemporaryLogin, sessionExpiryTime]);
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
@@ -54,10 +93,61 @@ const Navbar: React.FC = () => {
             <button className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700" aria-label="Favorites">
               <Heart className="h-5 w-5" />
             </button>
-            <button className="flex items-center space-x-2 px-4 py-2 rounded-md bg-primary text-white hover:bg-primary/90 transition-colors">
-              <User className="h-5 w-5" />
-              <span>Sign In</span>
-            </button>
+            
+            {isLoggedIn && user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                    {user.avatar ? (
+                      <img 
+                        src={user.avatar} 
+                        alt={user.name} 
+                        className="h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-700" 
+                      />
+                    ) : (
+                      <UserCircle className="h-8 w-8 text-gray-600 dark:text-gray-400" />
+                    )}
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="font-medium">{user.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
+                      {isTemporaryLogin && (
+                        <div className="flex items-center mt-1 text-xs text-amber-500">
+                          <Clock className="h-3 w-3 mr-1" />
+                          <span>Session: {remainingTime}</span>
+                        </div>
+                      )}
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <UserCircle className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Heart className="mr-2 h-4 w-4" />
+                    <span>Favorites</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link to="/signin" className="flex items-center space-x-2 px-4 py-2 rounded-md bg-primary text-white hover:bg-primary/90 transition-colors">
+                <User className="h-5 w-5" />
+                <span>Sign In</span>
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -112,10 +202,34 @@ const Navbar: React.FC = () => {
                 <Heart className="h-5 w-5" />
                 <span>Favorites</span>
               </button>
-              <button className="flex items-center space-x-2 py-2 px-4 rounded-md bg-primary text-white">
-                <User className="h-5 w-5" />
-                <span>Sign In</span>
-              </button>
+              
+              {isLoggedIn && user ? (
+                <div className="flex items-center space-x-2 py-2 px-3">
+                  {user.avatar ? (
+                    <img 
+                      src={user.avatar} 
+                      alt={user.name} 
+                      className="h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-700" 
+                    />
+                  ) : (
+                    <UserCircle className="h-8 w-8" />
+                  )}
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">{user.name}</span>
+                    <button 
+                      onClick={handleLogout}
+                      className="text-xs text-primary hover:text-primary/90 text-left"
+                    >
+                      Log out
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <Link to="/signin" className="flex items-center space-x-2 py-2 px-4 rounded-md bg-primary text-white">
+                  <User className="h-5 w-5" />
+                  <span>Sign In</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>

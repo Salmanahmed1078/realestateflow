@@ -59,7 +59,7 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch, onOpenChange }) => {
 
     try {
       // Process the message based on conversation step
-      const { aiResponse, filters } = await processUserMessage(
+      const { aiResponse, filters, skipStepIncrement } = await processUserMessage(
         userMessage,
         chatStep,
         setPreference,
@@ -74,8 +74,8 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch, onOpenChange }) => {
       // Add AI response to conversation
       addMessage('assistant', aiResponse);
       
-      // Move to next step if not at the open conversation step yet
-      if (chatStep <= 3) {
+      // Move to next step if not at the open conversation step yet and not skipping increment
+      if (chatStep <= 3 && !skipStepIncrement) {
         nextStep();
       }
     } catch (error) {
@@ -109,17 +109,17 @@ const AIChat: React.FC<AIChatProps> = ({ onSearch, onOpenChange }) => {
       {/* Floating chat button */}
       <Button
         onClick={toggleChat}
-        className="fixed bottom-6 right-6 z-10 rounded-full shadow-lg p-4 flex items-center justify-center animate-bounce"
+        className="fixed bottom-6 right-6 z-10 rounded-full shadow-lg p-5 flex items-center justify-center animate-bounce"
         variant="secondary"
         size="icon"
       >
-        <Bot className="h-6 w-6" />
+        <Bot className="h-8 w-8" />
       </Button>
 
       {/* Chat dialog - positioned on the right side */}
       {isOpen && (
         <div className="fixed inset-y-0 right-0 z-50 flex items-stretch justify-end">
-          <div className="bg-white dark:bg-gray-800 w-[400px] h-full flex flex-col animate-slide-in-from-right shadow-xl">
+          <div className="bg-white dark:bg-gray-800 w-[350px] h-full flex flex-col animate-slide-in-from-right shadow-xl">
             {/* Header */}
             <ChatHeader 
               onClose={toggleChat} 

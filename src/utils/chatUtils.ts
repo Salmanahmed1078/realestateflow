@@ -14,17 +14,19 @@ export const processUserMessage = async (
   aiResponse: string;
   filters?: PropertyFilters;
   recommendedIds?: string[];
+  skipStepIncrement?: boolean;
 }> => {
   let aiResponse = '';
   let filters: PropertyFilters | undefined;
   let recommendedIds: string[] | undefined;
+  let skipStepIncrement = false;
   
   switch (chatStep) {
     case 0: // Property type question
       // Process user's property type preference
       if (userMessage.toLowerCase().includes('house')) {
         setPreference('propertyType', 'House');
-      } else if (userMessage.toLowerCase().includes('apartment')) {
+      } else if (userMessage.toLowerCase().includes('apart') || userMessage.toLowerCase().includes('apt')) {
         setPreference('propertyType', 'Apartment');
       } else if (userMessage.toLowerCase().includes('condo')) {
         setPreference('propertyType', 'Condo');
@@ -39,7 +41,10 @@ export const processUserMessage = async (
       
     case 1: // Budget question
       // Process budget information
-      const budgetMatch = userMessage.match(/(\$?[\d,]+)k?-(\$?[\d,]+)k?/i);
+      let budgetSet = false;
+      
+      // Try to match standard range format (e.g., 300k-500k, $300,000-$500,000)
+      const budgetMatch = userMessage.match(/\$?(\d[\d,]*)k?\s*-\s*\$?(\d[\d,]*)k?/i);
       if (budgetMatch) {
         const minStr = budgetMatch[1].replace(/[$,]/g, '');
         const maxStr = budgetMatch[2].replace(/[$,]/g, '');
@@ -47,16 +52,55 @@ export const processUserMessage = async (
         let max = parseInt(maxStr);
         
         // Check if values are in thousands (k)
-        if (userMessage.includes('k') || userMessage.includes('K')) {
-          min *= 1000;
-          max *= 1000;
+        if (userMessage.toLowerCase().includes('k')) {
+          if (!userMessage.toLowerCase().split('k')[0].includes(maxStr)) {
+            min *= 1000;
+          }
+          if (!userMessage.toLowerCase().split('k')[0].includes(minStr)) {
+            max *= 1000;
+          }
         }
         
         setPreference('budget', { min, max });
+        budgetSet = true;
+      } else {
+        // Try to match single number with min/max qualifiers
+        const maxBudgetMatch = userMessage.match(/\$?(\d[\d,]*)k?\s*(max|maximum|under|less than|up to)/i) || 
+                              userMessage.match(/(max|maximum|under|less than|up to)\s*\$?(\d[\d,]*)k?/i);
+        
+        if (maxBudgetMatch) {
+          const valueIndex = maxBudgetMatch[1].match(/\d/) ? 1 : 2;
+          let maxValue = parseInt(maxBudgetMatch[valueIndex].replace(/[$,]/g, ''));
+          
+          if (maxBudgetMatch[0].toLowerCase().includes('k')) {
+            maxValue *= 1000;
+          }
+          
+          setPreference('budget', { min: 0, max: maxValue });
+          budgetSet = true;
+        }
       }
       
       // Move to next question with context
-      const budgetRange = preferences.budget ? `${preferences.budget.min/1000}k-${preferences.budget.max/1000}k` : '';
+      let budgetRange = '';
+      if (budgetSet && preferences.budget) {
+        // Format the budget range nicely
+        const minFormatted = preferences.budget.min >= 1000000 ? 
+          `$${(preferences.budget.min/1000000).toFixed(1)}M` : 
+          `$${(preferences.budget.min/1000).toFixed(0)}K`;
+          
+        const maxFormatted = preferences.budget.max >= 1000000 ? 
+          `$${(preferences.budget.max/1000000).toFixed(1)}M` : 
+          `$${(preferences.budget.max/1000).toFixed(0)}K`;
+          
+        budgetRange = `${minFormatted}-${maxFormatted}`;
+      } else {
+        // If we couldn't parse the budget, ask again
+        aiResponse = `I'm sorry, I couldn't understand your budget range. Could you please specify it again in a format like "$300k-500k" or "up to $700k"?`;
+        skipStepIncrement = true;
+        break;
+      }
+      
       aiResponse = `Got it, I'll look for properties in the ${budgetRange} range. Which areas or neighborhoods are you interested in? You can mention multiple locations if you'd like.`;
       break;
       
@@ -173,5 +217,5 @@ export const processUserMessage = async (
       break;
   }
   
-  return { aiResponse, filters, recommendedIds };
+  return { aiResponse, filters, recommendedIds, skipStepIncrement };
 };
