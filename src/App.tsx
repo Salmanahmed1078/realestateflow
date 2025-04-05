@@ -11,7 +11,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import { initScrollReveal } from "./utils/animationUtils";
 import LoadingScreen from "./components/layout/LoadingScreen";
-
+import { Analytics } from "@vercel/analytics/react"
 const queryClient = new QueryClient();
 
 const App = () => {
